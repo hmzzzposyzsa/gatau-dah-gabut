@@ -96,10 +96,25 @@
         return api("dep.get", { orderId: j.pending.orderId }).then(function (d) { state.dep = d.deposit; watchDeposit(); }).catch(function () {});
       }
     }).then(function () { if (!(silent && typing())) render(); }).catch(function (e) {
-      if (e.status === 401) fatal("Buka halaman ini lewat bot Telegram."); else if (!silent) toast(e.message, "bad");
+      if (e.status === 401) fatal("Buka halaman ini lewat bot Telegram.");
+      else if (!silent && !state.me) fatal("Mini App gagal dimuat: " + (e && e.message ? e.message : "server tidak merespons.") + " Periksa koneksi API bot lalu coba lagi.", true);
+      else if (!silent) toast(e.message, "bad");
     });
   }
-  function fatal(msg) { root.textContent = ""; root.appendChild(h("div", { class: "center" }, msg)); }
+  function fatal(msg, canRetry) {
+    root.textContent = "";
+    var box = h("div", { class: "center" }, msg);
+    if (canRetry) {
+      var retry = h("button", { class: "btn g", type: "button" }, "Coba Muat Ulang");
+      retry.addEventListener("click", function () {
+        retry.disabled = true;
+        retry.textContent = "Memuat…";
+        load();
+      });
+      box.appendChild(h("div", { class: "btns" }, retry));
+    }
+    root.appendChild(box);
+  }
   function launch(id) {
     return api("launch", { id: id }).then(function () {
       haptic("success"); toast("Dibuka di chat bot ✔", "ok");
