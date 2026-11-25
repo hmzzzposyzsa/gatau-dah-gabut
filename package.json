@@ -1,0 +1,9 @@
+{
+  "name": "jasa-sebar-miniapp",
+  "private": true,
+  "description": "Website Mini App Telegram (Jasa Sebar / Sewa BC) untuk Cloudflare Pages",
+  "scripts": {
+    "deploy": "wrangler pages deploy public --project-name jasa-sebar",
+    "dev": "wrangler pages dev public"
+  }
+}
